@@ -25,7 +25,9 @@ public class BankingCustom {
             new CustomCashflow(CustomCashflow.TRANSFER, new SimpleDate("10/05/2022"), 100.00, acc4, acc2),
             new CustomCashflow(CustomCashflow.TRANSFER, new SimpleDate("29/04/2022"), 50.00, acc4, acc2),
             new CustomCashflow(CustomCashflow.TRANSFER, new SimpleDate("26/3/2022"), 5.00, acc1, acc3),
-                new CustomCashflow(CustomCashflow.WITHDRAWAL, new SimpleDate("08/03/2022"), 30.00, acc1, acc1)
+            new CustomCashflow(CustomCashflow.WITHDRAWAL, new SimpleDate("08/03/2022"), 30.00, acc1, acc1),
+            new CustomCashflow(CustomCashflow.WITHDRAWAL, new SimpleDate("08/06/2022"), 20.00, acc2, acc2),
+                bank1, bank2
         };
 
         new RuleRunner().runRules( new String[] { "Custom.drl" },

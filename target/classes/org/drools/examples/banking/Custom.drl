@@ -2,7 +2,18 @@ package org.drools.examples.banking;
 //dialect  "mvel"
 import java.util.ArrayList
 
-rule "Last bank deposit"
+rule "Print bank balance"
+    when
+        $bank : CustomBank ( $name : bankName,
+                             $balance : bankBalance)
+        ArrayList( $total : size == 0 ) from collect( CustomCashflow(  ) )
+    then
+        System.out.println("\n------------------------------\n"
+                     + $name + " BALANCE AFTER ALL OPERATIONS: " + String.format("%.2f", $balance) + "\n------------------------------");
+        delete($bank);
+end
+
+/*rule "Last bank deposit"
     when
     $cashflow : CustomCashflow( $account : receiver,
                                            $date : date, $amount : amount, $bank : receivingBank,
@@ -11,7 +22,8 @@ rule "Last bank deposit"
     then
             System.out.println("DEPOSIT OPERATION: \nAccount " + $account.getAccountNo() +  " (" + $account.getBank().getBankName() + "): " + "\nAmount: " + $amount + "\nDate: " + $date);
             $account.setBalance($account.getBalance()+$amount);
-            System.out.println("New balance: " + $account.getBalance() + '\n');
+            $account.getBank().setBankBalance($account.getBank().getBankBalance()+$amount);
+            System.out.println("New balance: " + String.format("%.2f", $account.getBalance()) + '\n');
             System.out.println("\n------------------------------\n"
              + $account.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + $account.getBank().getBankBalance() + "\n------------------------------\n");
             delete($cashflow);
@@ -26,7 +38,8 @@ rule "Last bank withdrawal"
     then
             System.out.println("WITHDRAWAL OPERATION: \nAccount " + $account.getAccountNo() +  " (" + $account.getBank().getBankName() + "): " + "\nAmount: " + $amount + "\nDate: " + $date);
             $account.setBalance($account.getBalance()-$amount);
-            System.out.println("New balance: " + $account.getBalance() + '\n');
+            $account.getBank().setBankBalance($account.getBank().getBankBalance()-$amount);
+            System.out.println("New balance: " + String.format("%.2f", $account.getBalance()) + '\n');
             System.out.println("\n------------------------------\n"
              + $account.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + $account.getBank().getBankBalance() + "\n------------------------------\n");
             delete($cashflow);
@@ -43,14 +56,16 @@ rule "Last bank transfer"
                     $receiver.getAccountNo() + " (" + $receiver.getBank().getBankName() +   ")\nDate: " + $date);
                     $sender.setBalance($sender.getBalance()-$amount);
                     $receiver.setBalance($receiver.getBalance()+$amount);
-                    System.out.println($sender.getAccountNo() + " account new balance: " + $sender.getBalance());
-                    System.out.println($receiver.getAccountNo() + " account new balance: " + $receiver.getBalance());
+                    System.out.println($sender.getAccountNo() + " account new balance: " + String.format("%.2f", $sender.getBalance()));
+                    System.out.println($receiver.getAccountNo() + " account new balance: " + String.format("%.2f", $receiver.getBalance()));
+                    $sender.getBank().setBankBalance($sender.getBank().getBankBalance()-$amount);
+                    $receiver.getBank().setBankBalance($receiver.getBank().getBankBalance()+$amount);
                     System.out.println("\n------------------------------\n"
-                                 + $sender.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + $sender.getBank().getBankBalance() + "\n------------------------------");
+                                 + $sender.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + String.format("%.2f", $sender.getBank().getBankBalance()) + "\n------------------------------");
                     System.out.println("\n------------------------------\n"
-                                                     + $receiver.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + $receiver.getBank().getBankBalance() + "\n------------------------------\n");
+                                                     + $receiver.getBank().getBankName() + " BALANCE AFTER ALL OPERATIONS: " + String.format("%.2f", $receiver.getBank().getBankBalance()) + "\n------------------------------\n");
                     delete($cashflow);
-end
+end*/
 
 rule "Deposit"
     when
@@ -61,7 +76,8 @@ rule "Deposit"
     then
             System.out.println("DEPOSIT OPERATION: \nAccount " + $account.getAccountNo() +  " (" + $account.getBank().getBankName() + "): " + "\nAmount: " + $amount + "\nDate: " + $date);
             $account.setBalance($account.getBalance()+$amount);
-            System.out.println("New balance: " + $account.getBalance() + '\n');
+            $account.getBank().setBankBalance($account.getBank().getBankBalance()+$amount);
+            System.out.println("New balance: " + String.format("%.2f", $account.getBalance()) + '\n');
             delete($cashflow);
 end
 
@@ -74,7 +90,8 @@ rule "Withdrawal"
         then
                 System.out.println("WITHDRAWAL OPERATION: \nAccount " + $account.getAccountNo() +  " (" + $account.getBank().getBankName() + "): " + "\nAmount: " + $amount + "\nDate: " + $date);
                 $account.setBalance($account.getBalance()-$amount);
-                System.out.println("New balance: " + $account.getBalance() + '\n');
+                $account.getBank().setBankBalance($account.getBank().getBankBalance()-$amount);
+                System.out.println("New balance: " + String.format("%.2f", $account.getBalance()) + '\n');
                 delete($cashflow);
 end
 
@@ -89,7 +106,9 @@ rule "Transfer"
                 $receiver.getAccountNo() + " (" + $receiver.getBank().getBankName() +   ")\nDate: " + $date);
                 $sender.setBalance($sender.getBalance()-$amount);
                 $receiver.setBalance($receiver.getBalance()+$amount);
-                System.out.println($sender.getAccountNo() + " account new balance: " + $sender.getBalance());
-                System.out.println($receiver.getAccountNo() + " account new balance: " + $receiver.getBalance() + '\n');
+                $sender.getBank().setBankBalance($sender.getBank().getBankBalance()-$amount);
+                $receiver.getBank().setBankBalance($receiver.getBank().getBankBalance()+$amount);
+                System.out.println($sender.getAccountNo() + " account new balance: " + String.format("%.2f", $sender.getBalance()));
+                System.out.println($receiver.getAccountNo() + " account new balance: " + String.format("%.2f", $receiver.getBalance()) + '\n');
                 delete($cashflow);
 end
